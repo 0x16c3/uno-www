@@ -108,7 +108,7 @@ export default function GamePage() {
 
   const deckRef = React.useRef<HTMLDivElement>(null);
 
-  const wsInstance = useWebSocket(`${WS_URL}/${router.query.id}`);
+  const wsInstance = useWebSocket(`${WS_URL}/${router.query['id']}`);
 
   async function beforeUnload(e: any) {
     if (game?.host.id == userId) return;
