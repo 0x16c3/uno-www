@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 import { CardType as CardTypeEnum, Color } from '@/lib/enums';
 import { Card as CardType } from '@/lib/types';
@@ -16,7 +16,6 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import { useIsMobile } from '@/lib/utils/mobile';
-import { valueToPercent } from '@mui/base';
 
 function combineStyle(
   style1: React.CSSProperties,
@@ -53,7 +52,6 @@ export default function Card({
   ref,
   deckRef,
   onDrop,
-  children,
 }: {
   index?: number;
   selectedIndex?: number;
@@ -69,7 +67,6 @@ export default function Card({
   ref?: React.Ref<HTMLDivElement>;
   deckRef?: React.RefObject<HTMLDivElement>;
   onDrop?: (resetState: () => void, overrideColor: Color) => void;
-  children?: React.ReactNode;
 }) {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -112,6 +109,8 @@ export default function Card({
     'EIGHT',
     'NINE',
   ];
+
+  const cardRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (card.type == CardTypeEnum.NUMBER) {
@@ -161,8 +160,6 @@ export default function Card({
       setOffset(index * ((7 / cards.length) * gap));
     }
   }, [cards]);
-
-  const cardRef = React.useRef<HTMLDivElement>(null);
 
   const dragOriginX = useMotionValue(0);
   const dragOriginY = useMotionValue(0);

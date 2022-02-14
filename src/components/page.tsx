@@ -25,8 +25,7 @@ export default function Page({
                 display: 'flex',
                 height: '100%',
               }
-        }
-      >
+        }>
         <Container sx={{ width: '100%', maxWidth: '900px' }}>
           <Head>
             <title>{title}</title>

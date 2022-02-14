@@ -4,8 +4,8 @@ import { get, post, API_URL } from './api';
 import { Game } from './types';
 
 export async function getGames(): Promise<[Game[] | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await get<GamesResponse>(`${API_URL}/GameList`);
@@ -21,8 +21,8 @@ export async function getGames(): Promise<[Game[] | null, string | null]> {
 export async function getCurrentUserId(): Promise<
   [string | null, string | null]
 > {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await get<UserIdResponse>(`${API_URL}/GameList/me`);
@@ -37,8 +37,8 @@ export async function getCurrentUserId(): Promise<
 }
 
 export async function createGame(): Promise<[Game | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await post<GameResponse>(`${API_URL}/GameList/create`);
@@ -54,8 +54,8 @@ export async function createGame(): Promise<[Game | null, string | null]> {
 export async function getGame(
   gameId: string,
 ): Promise<[Game | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await get<GameResponse>(`${API_URL}/GameList/${gameId}`);
@@ -71,8 +71,8 @@ export async function getGame(
 export async function joinGame(
   gameId: string,
 ): Promise<[Game | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await get<GameResponse>(`${API_URL}/GameList/${gameId}/join`);
@@ -88,8 +88,8 @@ export async function joinGame(
 export async function leaveGame(
   gameId: string,
 ): Promise<[Game | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await get<GameResponse>(`${API_URL}/GameList/${gameId}/leave`);
@@ -105,8 +105,8 @@ export async function leaveGame(
 export async function endGame(
   gameId: string,
 ): Promise<[Status | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await post<Status>(`${API_URL}/GameList/${gameId}/end`);

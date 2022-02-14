@@ -83,7 +83,7 @@ export default function Home() {
     async function getExistingGame() {
       const [games, gamesError] = await getGames();
       const [uid, uidError] = await getCurrentUserId();
-      var game: Game | null = null;
+      let game: Game | null = null;
 
       if (!uid) {
         pushAlert('Unknown error', 'error');

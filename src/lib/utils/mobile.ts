@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export const useIsMobile = (breakpoint: number = 769) => {
-  const [width, setWidth] = useState<number>(0);
+export const useIsMobile = (breakpoint = 769) => {
+  const [width, setWidth] = useState(0);
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth);

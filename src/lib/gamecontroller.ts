@@ -6,8 +6,8 @@ import { Card, Game } from './types';
 export async function startGame(
   gameId: string,
 ): Promise<[Game | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await post<GameResponse>(
@@ -26,8 +26,8 @@ export async function advanceGame(
   gameId: string,
   card: Card | null,
 ): Promise<[Game | null, string | null]> {
-  var data = null;
-  var error = null;
+  let data = null;
+  let error = null;
 
   try {
     const res = await post<GameResponse>(

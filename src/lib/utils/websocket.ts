@@ -22,7 +22,7 @@ export const useWebSocket = (url: string) => {
 
   // (Optional) Open a connection on mount
   useEffect(() => {
-    var ws: WebSocket | undefined = undefined;
+    let ws: WebSocket | undefined = undefined;
 
     const cleanup = () => {
       console.log('useWebSocket: Closing websocket');
