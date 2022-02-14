@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 
-export const useWebSocket = (url: string) => {
+export const useWebSocket = (url: string | null) => {
   const [wsInstance, setWsInstance] = useState<WebSocket | undefined>();
 
   const isBrowser = typeof window !== 'undefined';
@@ -23,6 +23,8 @@ export const useWebSocket = (url: string) => {
   // (Optional) Open a connection on mount
   useEffect(() => {
     let ws: WebSocket | undefined = undefined;
+
+    if (!url) return;
 
     const cleanup = () => {
       console.log('useWebSocket: Closing websocket');
@@ -51,7 +53,7 @@ export const useWebSocket = (url: string) => {
         ws.close(1000);
       }
     };
-  }, []);
+  }, [url]);
 
   return wsInstance;
 };
