@@ -1,6 +1,6 @@
 import { GameResponse } from './schemes';
 
-import { post } from './api';
+import { post, API_URL } from './api';
 import { Card, Game } from './types';
 
 export async function startGame(
@@ -11,7 +11,7 @@ export async function startGame(
 
   try {
     const res = await post<GameResponse>(
-      `http://localhost:8000/GameController/${gameId}/start`,
+      `${API_URL}/GameController/${gameId}/start`,
     );
     data = res.game;
   } catch (e: any) {
@@ -31,7 +31,7 @@ export async function advanceGame(
 
   try {
     const res = await post<GameResponse>(
-      `http://localhost:8000/GameController/${gameId}/advance?timestamp=${new Date().getTime()}`,
+      `${API_URL}/GameController/${gameId}/advance?timestamp=${new Date().getTime()}`,
       { card: card },
     );
     data = res.game;

@@ -1,6 +1,6 @@
 import { GameResponse, GamesResponse, Status, UserIdResponse } from './schemes';
 
-import { get, post } from './api';
+import { get, post, API_URL } from './api';
 import { Game } from './types';
 
 export async function getGames(): Promise<[Game[] | null, string | null]> {
@@ -8,7 +8,7 @@ export async function getGames(): Promise<[Game[] | null, string | null]> {
   var error = null;
 
   try {
-    const res = await get<GamesResponse>(`http://localhost:8000/GameList`);
+    const res = await get<GamesResponse>(`${API_URL}/GameList`);
     data = res.games;
   } catch (e: any) {
     if (e.error) error = e.error;
@@ -25,7 +25,7 @@ export async function getCurrentUserId(): Promise<
   var error = null;
 
   try {
-    const res = await get<UserIdResponse>(`http://localhost:8000/GameList/me`);
+    const res = await get<UserIdResponse>(`${API_URL}/GameList/me`);
     data = res.id;
   } catch (e: any) {
     if (e.error)
@@ -41,9 +41,7 @@ export async function createGame(): Promise<[Game | null, string | null]> {
   var error = null;
 
   try {
-    const res = await post<GameResponse>(
-      `http://localhost:8000/GameList/create`,
-    );
+    const res = await post<GameResponse>(`${API_URL}/GameList/create`);
     data = res.game;
   } catch (e: any) {
     if (e.error) error = e.error;
@@ -60,9 +58,7 @@ export async function getGame(
   var error = null;
 
   try {
-    const res = await get<GameResponse>(
-      `http://localhost:8000/GameList/${gameId}`,
-    );
+    const res = await get<GameResponse>(`${API_URL}/GameList/${gameId}`);
     data = res.game;
   } catch (e: any) {
     if (e.error) error = e.error;
@@ -79,9 +75,7 @@ export async function joinGame(
   var error = null;
 
   try {
-    const res = await get<GameResponse>(
-      `http://localhost:8000/GameList/${gameId}/join`,
-    );
+    const res = await get<GameResponse>(`${API_URL}/GameList/${gameId}/join`);
     data = res.game;
   } catch (e: any) {
     if (e.error) error = e.error;
@@ -98,9 +92,7 @@ export async function leaveGame(
   var error = null;
 
   try {
-    const res = await get<GameResponse>(
-      `http://localhost:8000/GameList/${gameId}/leave`,
-    );
+    const res = await get<GameResponse>(`${API_URL}/GameList/${gameId}/leave`);
     data = res.game;
   } catch (e: any) {
     if (e.error) error = e.error;
@@ -117,9 +109,7 @@ export async function endGame(
   var error = null;
 
   try {
-    const res = await post<Status>(
-      `http://localhost:8000/GameList/${gameId}/end`,
-    );
+    const res = await post<Status>(`${API_URL}/GameList/${gameId}/end`);
     data = res;
   } catch (e: any) {
     if (e.error) error = e.error;
