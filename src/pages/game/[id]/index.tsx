@@ -24,6 +24,7 @@ import { Status } from '@/lib/schemes';
 import { useWebSocket } from '@/lib/utils/websocket';
 import { advanceGame, startGame } from '@/lib/gamecontroller';
 import Card from '@/components/card';
+import { WS_URL } from '@/lib/api';
 
 async function btnEndGame(game: Game, pushAlert: any, redirect: any) {
   if (game.state === GameState.IDLE) {
@@ -107,9 +108,7 @@ export default function GamePage() {
 
   const deckRef = React.useRef<HTMLDivElement>(null);
 
-  const wsInstance = useWebSocket(
-    `ws://localhost:8000/GameList/${router.query.id}/ws`,
-  );
+  const wsInstance = useWebSocket(`${WS_URL}/${router.query.id}`);
 
   async function beforeUnload(e: any) {
     if (game?.host.id == userId) return;
