@@ -201,6 +201,10 @@ export default function Card({
   }
 
   function onDragStart(event: any, info: any) {
+    if (card.type != CardTypeEnum.WILD && card.type != CardTypeEnum.WILD4) {
+      return;
+    }
+
     if (!cardRef || !cardRef.current) {
       resetState();
       return;
