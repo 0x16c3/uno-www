@@ -395,6 +395,7 @@ export default function GamePage() {
                           );
 
                           if (_game) {
+                            resetState();
                             setGame(_game);
                           } else if (advanceError) {
                             pushAlert(advanceError, 'error');

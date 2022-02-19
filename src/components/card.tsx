@@ -201,6 +201,8 @@ export default function Card({
   }
 
   function onDragStart(event: any, info: any) {
+    setIsDragging(true);
+
     if (card.type != CardTypeEnum.WILD && card.type != CardTypeEnum.WILD4) {
       return;
     }
