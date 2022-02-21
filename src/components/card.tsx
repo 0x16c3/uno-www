@@ -84,6 +84,7 @@ export default function Card({
   const [isDragging, setIsDragging] = React.useState<boolean>(false);
   const [isInDropZone, setIsInDropZone] = React.useState<boolean>(false);
   const [isDropped, setIsDropped] = React.useState<boolean>(false);
+  const [canBeSelected, setCanBeSelected] = React.useState<boolean>(selected);
 
   const [offset, setOffset] = React.useState<number>(0);
 
@@ -202,6 +203,8 @@ export default function Card({
 
   function onDragStart(event: any, info: any) {
     setIsDragging(true);
+    setCanBeSelected(false);
+    if (onClick && !isDropped) onClick();
 
     if (card.type != CardTypeEnum.WILD && card.type != CardTypeEnum.WILD4) {
       return;
@@ -236,6 +239,7 @@ export default function Card({
     }
   }
 
+  const isSelected = selected;
   const iSelected = selected || index < 0;
 
   const variants: { [key: string]: TargetAndTransition } = {
@@ -244,7 +248,7 @@ export default function Card({
         left: offset,
         right: -offset,
         x: iSelected ? 0 : index < selectedIndex ? -64 : 64,
-        y: selected ? -selectAmount : 0,
+        y: isSelected ? -selectAmount : 0,
         opacity: 1,
       },
       animate,
@@ -253,7 +257,7 @@ export default function Card({
       left: offset,
       right: -offset,
       x: iSelected ? 0 : index < selectedIndex ? -64 : 64,
-      y: selected ? -selectAmount : -hoverAmount,
+      y: isSelected ? -selectAmount : -hoverAmount,
       opacity: 1,
     },
     inDeck: {
@@ -288,9 +292,6 @@ export default function Card({
     <Paper
       ref={ref ? ref : cardRef}
       elevation={3}
-      onMouseDown={(event: any) => {
-        if (event.buttons == 1 && onClick && !isDropped) onClick();
-      }}
       sx={combineStyle(
         {
           width: '175px',
@@ -312,14 +313,24 @@ export default function Card({
       onDragStart={onDragStart}
       onDragEnd={() => {
         setIsDragging(false);
-        if (!ifInBounds()) setIsInDropZone(false);
-        else {
+        setCanBeSelected(true);
+        if (!ifInBounds()) {
+          if (card.color == Color.JOKER) {
+            setOverrideColor(Color.JOKER);
+            setColor(colors[Color.JOKER]);
+          }
+
+          setIsInDropZone(false);
+        } else {
           setIsDropped(true);
           onDrop != undefined && onDrop(resetState, overrideColor);
         }
       }}
       dragSnapToOrigin={isInDropZone && isDragging && !isDropped ? false : true}
-      whileTap={{ scale: 1.12, cursor: 'grabbing' }}>
+      whileTap={{ scale: 1.12, cursor: 'grabbing' }}
+      onTap={() => {
+        if (onClick && !isDropped) onClick();
+      }}>
       <Paper
         elevation={0}
         sx={{

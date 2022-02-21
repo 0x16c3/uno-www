@@ -6,7 +6,8 @@ import Page from '@/components/page';
 
 import { Alert, Button, Container, Divider, Grid, Paper } from '@mui/material';
 import { VariantType, useSnackbar } from 'notistack';
-import { useTheme } from '@mui/system';
+import { Box } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 
 import {
   FormControl,
@@ -16,6 +17,8 @@ import {
   IconButton,
 } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
+
+import { motion } from 'framer-motion';
 
 import { endGame, getCurrentUserId, getGame, leaveGame } from '@/lib/gamelist';
 import { Game } from '@/lib/types';
@@ -90,6 +93,17 @@ async function btnDrawCard(game: Game, pushAlert: any) {
   }
 }
 
+enum PlayerColors {
+  RED = '#f44336',
+  ORANGE = '#ff9800',
+  YELLOW = '#ffeb3b',
+  GREEN = '#4caf50',
+  BLUE = '#2196f3',
+  INDIGO = '#3f51b5',
+  VIOLET = '#9c27b0',
+  PINK = '#e91e63',
+}
+
 export default function GamePage() {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
@@ -105,6 +119,7 @@ export default function GamePage() {
   const [initError, setInitError] = React.useState('');
 
   const [selectedCard, setSelectedCard] = React.useState<number>(0);
+  const [selfColor, setSelfColor] = React.useState<PlayerColors | null>(null);
 
   const deckRef = React.useRef<HTMLDivElement>(null);
 
@@ -113,6 +128,8 @@ export default function GamePage() {
   );
 
   async function beforeUnload(e: any) {
+    return;
+
     if (game?.host.id == userId) return;
 
     const [_game, gameError] = await leaveGame(gameId);
@@ -146,8 +163,13 @@ export default function GamePage() {
 
       const [game, gameError] = await getGame(gameId);
 
-      if (game) setGame(game);
-      else if (gameError) setInitError(gameError);
+      if (game) {
+        setGame(game);
+        const playerIndex = Object.keys(game.players).findIndex(
+          (player: string) => player === userId,
+        );
+        setSelfColor(Object.values(PlayerColors)[playerIndex]);
+      } else if (gameError) setInitError(gameError);
       else setInitError("Couldn't get game, please refresh.");
     }
 
@@ -216,43 +238,42 @@ export default function GamePage() {
     return (
       <Page>
         <Grid container spacing={2} alignItems="center" alignContent="center">
-          <Grid item md={3} xs={12}>
+          <Grid item md={4} xs={12}>
             <h1>Game Idle</h1>
             <code>
               <h5>
                 Players: {Object.keys(game.players).length.toString()}/
                 {game.players_max}
               </h5>
+              <Grid
+                container
+                spacing={0}
+                alignItems="center"
+                alignContent="center">
+                {Object.values(PlayerColors).map((color, i) => (
+                  <Grid item>
+                    <Box
+                      sx={{
+                        backgroundColor:
+                          color +
+                          (Object.keys(game.players).length > i ? 'ff' : '90'),
+                        width: 36,
+                        height: color == selfColor ? 32 : 24,
+                        borderRadius:
+                          i == 0
+                            ? `${theme.shape.borderRadius}px 0px 0px ${theme.shape.borderRadius}px`
+                            : i == 7
+                            ? `0px ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0px`
+                            : 0,
+                      }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
             </code>
           </Grid>
-          <Grid item md={3} xs={12}>
-            <FormControl
-              sx={{ m: 1, width: '25ch' }}
-              variant="outlined"
-              margin="dense">
-              <InputLabel htmlFor="outlined-adornment-password">
-                Game ID
-              </InputLabel>
-              <OutlinedInput
-                readOnly
-                id="outlined-adornment-password"
-                type="text"
-                value={game.id}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="copy game id"
-                      onClick={() => btnCopyGame(game, pushAlert)}
-                      edge="end">
-                      <ContentCopy />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
-          </Grid>
-          <Grid item md xs={12} textAlign="right">
+          <Grid item md={3} xs={12}></Grid>
+          <Grid item md={5} xs={12} textAlign="right">
             <h2>Waiting for the host to start the game</h2>
             <Grid
               container
@@ -294,6 +315,34 @@ export default function GamePage() {
                 </Grid>
               )}
             </Grid>
+            <br />
+            <Divider variant="middle" />
+            <br />
+            <FormControl
+              sx={{ m: 1, width: '25ch' }}
+              variant="outlined"
+              margin="dense">
+              <InputLabel htmlFor="outlined-adornment-password">
+                Game ID
+              </InputLabel>
+              <OutlinedInput
+                readOnly
+                id="outlined-adornment-password"
+                type="text"
+                value={game.id}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="copy game id"
+                      onClick={() => btnCopyGame(game, pushAlert)}
+                      edge="end">
+                      <ContentCopy />
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+            </FormControl>
           </Grid>
         </Grid>
       </Page>
@@ -317,16 +366,78 @@ export default function GamePage() {
               justifyContent="space-between">
               <Grid item md xs={12}>
                 <h1>Game in progress</h1>
-                <code>
-                  <h5>Until your turn: {leftTurns || 'Your turn'}</h5>
-                </code>
+                <Grid
+                  container
+                  spacing={0}
+                  alignItems="center"
+                  alignContent="center">
+                  {[...Array(Object.keys(game.players).length).keys()].map(
+                    (i) => (
+                      <Grid item>
+                        <Box
+                          component={motion.div}
+                          sx={{
+                            backgroundColor:
+                              Object.values(PlayerColors)[i] +
+                              (Object.keys(game.players).length > i
+                                ? 'ff'
+                                : '90'),
+                            width: 36,
+                            height:
+                              game.turn == Object.keys(game.players)[i]
+                                ? 32
+                                : Object.keys(game.players)[i] == userId
+                                ? 28
+                                : 24,
+                            borderRadius:
+                              i == 0
+                                ? `${theme.shape.borderRadius}px 0px 0px ${theme.shape.borderRadius}px`
+                                : i == Object.keys(game.players).length - 1
+                                ? `0px ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0px`
+                                : 0,
+                          }}
+                        />
+                      </Grid>
+                    ),
+                  )}
+                </Grid>
+                <br />
+                {leftTurns ? (
+                  <code>
+                    <h5>{`Until your turn: ${leftTurns}`}</h5>
+                  </code>
+                ) : (
+                  <Paper
+                    sx={{
+                      p: 1,
+                      alignContent: 'center',
+                      alignItems: 'center',
+                      bgcolor: theme.palette.secondary.light,
+                    }}>
+                    <h5
+                      style={{
+                        display: 'inline-block',
+                        margin: 0,
+                        color: theme.palette.secondary.contrastText,
+                      }}>
+                      <code>Your turn!</code>
+                    </h5>
+                  </Paper>
+                )}
+
                 {leftTurns > 0 ? null : (
-                  <Button
-                    variant="contained"
-                    size="medium"
-                    onClick={() => btnDrawCard(game, pushAlert)}>
-                    {game.drawed ? 'Skip' : 'Draw Card'}
-                  </Button>
+                  <>
+                    <h5>
+                      <Button
+                        variant="contained"
+                        size="medium"
+                        onClick={() => btnDrawCard(game, pushAlert)}
+                        sx={{ marginRight: 2 }}>
+                        {game.drawed ? 'Skip' : 'Draw Card'}
+                      </Button>
+                      {game.drawed ? "Still don't" : "Don't"} have a card?
+                    </h5>
+                  </>
                 )}
               </Grid>
               <Grid item md xs={12}>
@@ -380,6 +491,14 @@ export default function GamePage() {
                       deckRef={deckRef}
                       onDrop={(resetState, overrideColor) => {
                         async function advance() {
+                          if (
+                            card.color == Color.JOKER &&
+                            overrideColor == Color.JOKER
+                          ) {
+                            resetState();
+                            return;
+                          }
+
                           if (!game) {
                             pushAlert('Game not found', 'error');
                             return;
