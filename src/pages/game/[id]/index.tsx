@@ -251,7 +251,7 @@ export default function GamePage() {
                 alignItems="center"
                 alignContent="center">
                 {Object.values(PlayerColors).map((color, i) => (
-                  <Grid item>
+                  <Grid item key={`PLAYER-${i}`}>
                     <Box
                       sx={{
                         backgroundColor:
@@ -373,7 +373,7 @@ export default function GamePage() {
                   alignContent="center">
                   {[...Array(Object.keys(game.players).length).keys()].map(
                     (i) => (
-                      <Grid item>
+                      <Grid item key={`TURN-${i}`}>
                         <Box
                           component={motion.div}
                           sx={{
