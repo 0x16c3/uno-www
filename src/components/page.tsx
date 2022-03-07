@@ -22,7 +22,6 @@ export default function Page({
                 height: '100%',
               }
             : {
-                display: 'flex',
                 height: '100%',
               }
         }>

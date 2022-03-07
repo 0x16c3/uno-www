@@ -29,6 +29,8 @@ import { advanceGame, startGame } from '@/lib/gamecontroller';
 import Card from '@/components/card';
 import { WS_URL } from '@/lib/api';
 
+import { useIsMobile } from '@/lib/utils/mobile';
+
 async function btnEndGame(game: Game, pushAlert: any, redirect: any) {
   if (game.state === GameState.IDLE) {
     const [status, error] = await endGame(game.id);
@@ -106,6 +108,8 @@ enum PlayerColors {
 
 export default function GamePage() {
   const theme = useTheme();
+  const isMobile = useIsMobile();
+
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
 
@@ -236,7 +240,7 @@ export default function GamePage() {
 
   if (game.state == GameState.IDLE)
     return (
-      <Page>
+      <Page center={!isMobile}>
         <Grid container spacing={2} alignItems="center" alignContent="center">
           <Grid item md={4} xs={12}>
             <h1>Game Idle</h1>
@@ -249,7 +253,9 @@ export default function GamePage() {
                 container
                 spacing={0}
                 alignItems="center"
-                alignContent="center">
+                alignContent="center"
+                width="100%"
+                height="100%">
                 {Object.values(PlayerColors).map((color, i) => (
                   <Grid item key={`PLAYER-${i}`}>
                     <Box
@@ -257,7 +263,7 @@ export default function GamePage() {
                         backgroundColor:
                           color +
                           (Object.keys(game.players).length > i ? 'ff' : '90'),
-                        width: 36,
+                        width: 33,
                         height: color == selfColor ? 32 : 24,
                         borderRadius:
                           i == 0
@@ -318,31 +324,33 @@ export default function GamePage() {
             <br />
             <Divider variant="middle" />
             <br />
-            <FormControl
-              sx={{ m: 1, width: '25ch' }}
-              variant="outlined"
-              margin="dense">
-              <InputLabel htmlFor="outlined-adornment-password">
-                Game ID
-              </InputLabel>
-              <OutlinedInput
-                readOnly
-                id="outlined-adornment-password"
-                type="text"
-                value={game.id}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="copy game id"
-                      onClick={() => btnCopyGame(game, pushAlert)}
-                      edge="end">
-                      <ContentCopy />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
+            <div style={{ textAlign: 'center' }}>
+              <FormControl
+                sx={{ m: 1, width: '25ch' }}
+                variant="outlined"
+                margin="dense">
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Game ID
+                </InputLabel>
+                <OutlinedInput
+                  readOnly
+                  id="outlined-adornment-password"
+                  type="text"
+                  value={game.id}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="copy game id"
+                        onClick={() => btnCopyGame(game, pushAlert)}
+                        edge="end">
+                        <ContentCopy />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Password"
+                />
+              </FormControl>
+            </div>
           </Grid>
         </Grid>
       </Page>
@@ -350,22 +358,23 @@ export default function GamePage() {
 
   if (game.state == GameState.ACTIVE)
     return (
-      <Page title={'Playing UNO - 0x16c3'}>
+      <Page title={'Playing UNO - 0x16c3'} center={!isMobile}>
         <Grid
           container
           spacing={16}
           direction="column"
           alignItems="center"
-          alignContent="center">
-          <Grid item sx={{ width: '70%' }}>
+          alignContent="center"
+          sx={{ width: '100%', marginLeft: 'auto' }}>
+          <Grid item sx={{ width: '100%' }}>
             <Grid
               container
               spacing={2}
               alignItems="center"
               alignContent="center"
               justifyContent="space-between">
-              <Grid item md xs={12}>
-                <h1>Game in progress</h1>
+              <Grid item xs={6}>
+                <h1>{leftTurns ? 'Game in progress' : 'Your turn!'}</h1>
                 <Grid
                   container
                   spacing={0}
@@ -406,17 +415,21 @@ export default function GamePage() {
                   <code>
                     <h5>{`Until your turn: ${leftTurns}`}</h5>
                   </code>
-                ) : (
+                ) : null}
+
+                {leftTurns == 0 && (
                   <Paper
                     sx={{
+                      display: 'inline-block',
                       p: 1,
+                      width: 91,
                       alignContent: 'center',
                       alignItems: 'center',
+                      marginRight: 1,
                       bgcolor: theme.palette.secondary.light,
                     }}>
                     <h5
                       style={{
-                        display: 'inline-block',
                         margin: 0,
                         color: theme.palette.secondary.contrastText,
                       }}>
@@ -427,7 +440,7 @@ export default function GamePage() {
 
                 {leftTurns > 0 ? null : (
                   <>
-                    <h5>
+                    <h5 style={{ display: 'inline-block' }}>
                       <Button
                         variant="contained"
                         size="medium"
@@ -440,7 +453,7 @@ export default function GamePage() {
                   </>
                 )}
               </Grid>
-              <Grid item md xs={12}>
+              <Grid item xs={6}>
                 <div style={{ float: 'right', display: 'block' }} ref={deckRef}>
                   <Card
                     key={`DECK-${deckTopCard.value}-${deckTopCard.color}-${deckTopCard.type}`}
@@ -460,7 +473,7 @@ export default function GamePage() {
               sx={{
                 width: '100%',
                 height: '265px',
-                transform: 'translate(-25%, 0)',
+                transform: 'translate(-30%, 0)',
                 position: 'relative',
               }}>
               <Grid
@@ -478,7 +491,7 @@ export default function GamePage() {
                       card={card}
                       selected={selectedCard == i}
                       onClick={() => setSelectedCard(i)}
-                      gap={96}
+                      gap={isMobile ? 66 : 96}
                       cards={game.players[userId]}
                       style={{
                         position: 'absolute',

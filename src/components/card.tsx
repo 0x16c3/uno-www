@@ -294,8 +294,8 @@ export default function Card({
       elevation={3}
       sx={combineStyle(
         {
-          width: '175px',
-          height: '265px',
+          width: isMobile ? '145px' : '175px',
+          height: isMobile ? '225px' : '265px',
           padding: '8px',
 
           userSelect: 'none',
